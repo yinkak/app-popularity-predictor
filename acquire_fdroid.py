@@ -53,7 +53,7 @@ def create_session_with_retries(
 
 def acquire_fdroid_data(
     url="https://f-droid.org/repo/index-v1.json",
-    output_file="data/fdroid.json",
+    output_file="data/uncleaned/fdroid.json",
     timeout=10,
 ):
     """

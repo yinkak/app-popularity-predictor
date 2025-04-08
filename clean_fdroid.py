@@ -126,7 +126,7 @@ def process_app(app: Dict[str, Any]) -> Optional[Dict[str, Any]]:
 
 
 def main(
-    input_file: str = "data/fdroid.json",
+    input_file: str = "data/uncleaned/fdroid.json",
     output_file: str = "data/cleaned/fdroid_cleaned.csv",
 ) -> None:
     """

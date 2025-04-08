@@ -84,7 +84,7 @@ def clean_installs(installs_str: str) -> int:
 
 
 def clean_googleplay_data(
-    input_file: str = "data/googleplay/googleplaystore.csv",
+    input_file: str = "data/uncleaned/googleplaystore.csv",
     output_file: str = "data/cleaned/googleplay_cleaned.csv",
 ) -> None:
     """
@@ -170,7 +170,7 @@ def clean_googleplay_data(
 
 
 def main():
-    input_file = "data/googleplay/googleplaystore.csv"
+    input_file = "data/uncleaned/googleplaystore.csv"
     output_file = "data/cleaned/googleplay_cleaned.csv"
     clean_googleplay_data(input_file, output_file)
 

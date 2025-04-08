@@ -26,7 +26,7 @@ logging.basicConfig(
 
 def download_googleplay_dataset(
     dataset: str = "bhavikjikadara/google-play-store-applications",
-    output_path: str = "data/googleplay",
+    output_path: str = "data/uncleaned",
 ) -> None:
     """
     Downloads and unzips the Google Play Store Applications dataset from Kaggle.
@@ -55,7 +55,7 @@ def download_googleplay_dataset(
 
 def main() -> None:
     dataset = "bhavikjikadara/google-play-store-applications"
-    output_path = "data/googleplay"
+    output_path = "data/uncleaned"
     download_googleplay_dataset(dataset, output_path)
 
 
