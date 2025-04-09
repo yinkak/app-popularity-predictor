@@ -7,20 +7,29 @@ This project compares apps from the Google Play Store (proprietary) with those f
 ## Project Structure
 
 ```
+CMPT-353-PROJECT/
 ├── data/
-│ ├── google_play.csv # Kaggle dataset for Google Play apps
-│ └── fdroid.json # JSON data scraped/collected from F-Droid
+│   ├── cleaned/
+│   │   ├── fdroid_cleaned.csv
+│   │   └── googleplay_cleaned.csv
+│   ├── combined/
+│   │   ├── combined_apps_enhanced.csv
+│   │   └── combined_apps.csv
+│   └── uncleaned/
+│       ├── fdroid.json
+│       └── googleplaystore.csv
 ├── notebooks/
-│ ├── 1_EDA.ipynb # Jupyter notebook for exploratory data analysis
-│ ├── 2_FeatureEngineering.ipynb # Notebook for creating new features
-│ └── 3_ModelBuilding.ipynb # Notebook for training and evaluating models
+│   ├── Feature_Derivation.ipynb
+│   └── Visualize_Trends.ipynb
 ├── src/
-│ ├── data_cleaning.py # Script to clean and preprocess raw data
-│ ├── feature_engineering.py # Script to create and transform features
-│ ├── model_training.py # Script for model training and evaluation
-│ └── utils.py # Helper functions
-├── requirements.txt # List of required libraries
-└── README.md
+│   ├── acquire_fdroid.py
+│   ├── acquire_googleplay.py
+│   ├── clean_fdroid.py
+│   ├── clean_googleplay.py
+│   └── combine_datasets.py
+├── README.md
+└── requirements.txt
+
 ```
 
 ## Required Libraries
