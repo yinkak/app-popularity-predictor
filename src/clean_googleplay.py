@@ -82,6 +82,29 @@ def clean_installs(installs_str: str) -> int:
         logging.warning(f"Error converting Installs '{installs_str}': {e}")
         return None
 
+def assign_price_tier(price):
+    """
+    Assigns an ordinal price tier (1–5) based on app price.
+
+    Args:
+        price (float or int): The cleaned numeric price.
+
+    Returns:
+        int: Ordinal price tier. 1 = free, 5 = most expensive.
+    """
+    if pd.isna(price):
+        return 1  # Default unknown/missing as free
+    elif price == 0:
+        return 1
+    elif price <= 2:
+        return 2
+    elif price <= 10:
+        return 3
+    elif price <= 30:
+        return 4
+    else:
+        return 5
+
 
 def clean_googleplay_data(
     input_file: str = "data/uncleaned/googleplaystore.csv",
@@ -132,6 +155,10 @@ def clean_googleplay_data(
     df["price_clean"] = df["price"].replace({r"\$": "", ",": ""}, regex=True)
     df["price_clean"] = pd.to_numeric(df["price_clean"], errors="coerce")
 
+    # Derive price tier from price_clean
+    df["price_tier"] = df["price_clean"].apply(assign_price_tier)
+
+
     logging.info("Converting 'last_updated' column to datetime...")
     try:
         df["last_updated_date"] = pd.to_datetime(
@@ -139,6 +166,12 @@ def clean_googleplay_data(
         )
     except Exception as e:
         logging.error(f"Error parsing 'last_updated' dates: {e}")
+
+    # Compute days since last update
+    df["update_freq_days"] = (pd.Timestamp("today") - df["last_updated_date"]).dt.days
+
+    # Assume Google Play apps do not report anti-features; default to 0
+    df["anti_feature_score"] = 0
 
     initial_len = len(df)
     # Drop rows with missing critical data: app_name, rating, installs_clean
@@ -156,11 +189,14 @@ def clean_googleplay_data(
             "installs_clean",
             "type",
             "price_clean",
+            "price_tier",
             "content_rating",
             "genres",
             "last_updated_date",
             "current_ver",
             "android_ver",
+            "update_freq_days",
+            "anti_feature_score",
         ]
     ].copy()
 

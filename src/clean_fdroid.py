@@ -89,6 +89,11 @@ def process_app(app: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         suggested_version = app.get("suggestedVersionName")
         anti_features = ", ".join(app.get("antiFeatures", []))
 
+         # Extract anti-features and count
+        anti_features_list = app.get("antiFeatures", [])
+        anti_features = ", ".join(anti_features_list)
+        anti_feature_score = len(anti_features_list)
+
         # Convert timestamps (if available), assuming they are in milliseconds
         added = app.get("added")
         last_updated = app.get("lastUpdated")
@@ -98,6 +103,14 @@ def process_app(app: Dict[str, Any]) -> Optional[Dict[str, Any]]:
             if last_updated
             else None
         )
+
+        # Compute update_freq_days -> days since last update
+        if last_updated:
+            update_freq_days = (datetime.now() - datetime.fromtimestamp(last_updated / 1000)).days
+        else:
+            update_freq_days = None
+        
+        price_tier = 1  # Free by default
 
         # Process localized fields with fallback
         localized = app.get("localized", {})
@@ -113,11 +126,14 @@ def process_app(app: Dict[str, Any]) -> Optional[Dict[str, Any]]:
             "author": author,
             "suggested_version": suggested_version,
             "anti_features": anti_features,
+            "anti_feature_score": anti_feature_score,
             "added_date": added_date,
             "last_updated_date": last_updated_date,
+            "update_freq_days": update_freq_days,
             "app_name": app_name,
             "summary": summary,
             "description": description,
+            "price_tier": price_tier,
         }
         return processed_app
     except Exception as e:
