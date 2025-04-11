@@ -89,7 +89,7 @@ def process_app(app: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         suggested_version = app.get("suggestedVersionName")
         anti_features = ", ".join(app.get("antiFeatures", []))
 
-         # Extract anti-features and count
+        # Extract anti-features and count
         anti_features_list = app.get("antiFeatures", [])
         anti_features = ", ".join(anti_features_list)
         anti_feature_score = len(anti_features_list)
@@ -106,10 +106,12 @@ def process_app(app: Dict[str, Any]) -> Optional[Dict[str, Any]]:
 
         # Compute update_freq_days -> days since last update
         if last_updated:
-            update_freq_days = (datetime.now() - datetime.fromtimestamp(last_updated / 1000)).days
+            update_freq_days = (
+                datetime.now() - datetime.fromtimestamp(last_updated / 1000)
+            ).days
         else:
             update_freq_days = None
-        
+
         price_tier = 1  # Free by default
 
         # Process localized fields with fallback

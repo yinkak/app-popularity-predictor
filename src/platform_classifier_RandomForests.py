@@ -14,7 +14,10 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import classification_report, confusion_matrix
 
 # Configure logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
+
 
 def load_data(data_path):
     """Load the enhanced combined dataset."""
@@ -28,6 +31,7 @@ def load_data(data_path):
     logging.info(f"Available columns: {df.columns.tolist()}")
     return df
 
+
 def filter_fair_features(df):
     """
     Select only fair features and clean them appropriately:
@@ -38,7 +42,6 @@ def filter_fair_features(df):
     df = df.copy()
     selected_features = ["content_rating", "paid_flag", "app_age_days"]
     logging.info(f"Using fair features: {selected_features}")
-    
 
     df = df.dropna(subset=["platform"]).copy()
     df["content_rating"] = df["content_rating"].fillna("Everyone")
@@ -46,21 +49,24 @@ def filter_fair_features(df):
 
     df_clean = df[selected_features + ["platform"]].copy()
     logging.info(f"After filtering, dataset shape: {df_clean.shape}")
-    
 
-    logging.info("Class balance:\n" + df_clean['platform'].value_counts().to_string())
+    logging.info("Class balance:\n" + df_clean["platform"].value_counts().to_string())
     return df_clean, selected_features
+
 
 def build_preprocessor(numerical_features, categorical_features):
     """Build ColumnTransformer for scaling and encoding."""
-    return ColumnTransformer(transformers=[
-        ('num', StandardScaler(), numerical_features),
-        ('cat', OneHotEncoder(handle_unknown='ignore'), categorical_features)
-    ])
+    return ColumnTransformer(
+        transformers=[
+            ("num", StandardScaler(), numerical_features),
+            ("cat", OneHotEncoder(handle_unknown="ignore"), categorical_features),
+        ]
+    )
+
 
 def main():
     # 1. Load data
-    data_path = os.path.join('data', 'combined', 'combined_apps_enhanced.csv')
+    data_path = os.path.join("data", "combined", "combined_apps_enhanced.csv")
     df = load_data(data_path)
 
     # 2. Filter and prepare features
@@ -68,7 +74,7 @@ def main():
     print("columns used", df_clean.columns)
     print(df_clean.head())
     X = df_clean[features]
-    y = df_clean['platform'].astype(str)
+    y = df_clean["platform"].astype(str)
 
     # 3. Train-test split
     X_train, X_test, y_train, y_test = train_test_split(
@@ -81,10 +87,12 @@ def main():
     categorical_features = ["content_rating"]
     preprocessor = build_preprocessor(numerical_features, categorical_features)
 
-    pipeline = Pipeline([
-        ('preprocessor', preprocessor),
-        ('classifier', RandomForestClassifier(n_estimators=100, random_state=42))
-    ])
+    pipeline = Pipeline(
+        [
+            ("preprocessor", preprocessor),
+            ("classifier", RandomForestClassifier(n_estimators=100, random_state=42)),
+        ]
+    )
 
     # 5. Train
     pipeline.fit(X_train, y_train)
@@ -103,5 +111,6 @@ def main():
     plt.savefig("images/platform_confusion_matrix.png")
     plt.close()
     logging.info("Confusion matrix plot saved.")
+
 
 main()

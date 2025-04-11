@@ -82,6 +82,7 @@ def clean_installs(installs_str: str) -> int:
         logging.warning(f"Error converting Installs '{installs_str}': {e}")
         return None
 
+
 def assign_price_tier(price):
     """
     Assigns an ordinal price tier (1–5) based on app price.
@@ -157,7 +158,6 @@ def clean_googleplay_data(
 
     # Derive price tier from price_clean
     df["price_tier"] = df["price_clean"].apply(assign_price_tier)
-
 
     logging.info("Converting 'last_updated' column to datetime...")
     try:
