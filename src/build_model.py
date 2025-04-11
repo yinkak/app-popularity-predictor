@@ -180,7 +180,7 @@ def main():
     plt.xlabel("Importance")
     plt.ylabel("Feature")
     plt.tight_layout()
-    plot_path = os.path.join("data", "combined", "feature_importances.png")
+    plot_path = os.path.join("images", "feature_importances.png")
     plt.savefig(plot_path)
     plt.close()
     logging.info(f"Feature importances plot saved to {plot_path}")
