@@ -2,11 +2,13 @@
 """
 build_model.py
 
-This script builds and evaluates a regression model to predict app ratings using the enhanced,
-combined dataset ("data/combined/combined_apps_enhanced.csv"). The model is based on a Random Forest
-Regressor. The pipeline includes preprocessing steps that scale numerical features and one-hot encode
-categorical features. Hyperparameters are tuned using GridSearchCV, and the model is evaluated using
-R² and RMSE metrics. Finally, the script extracts and saves a barplot of the top 10 feature importances.
+This script builds and evaluates a regression model to predict app ratings
+using the enhanced, combined dataset ("data/combined/combined_apps_enhanced.csv").
+The model is based on a Random Forest Regressor. The pipeline includes preprocessing
+steps that scale numerical features and one-hot encode categorical features.
+Hyperparameters are tuned using GridSearchCV, and the model is evaluated using
+R² and RMSE metrics. Finally, the script extracts and saves a barplot of the top
+10 feature importances.
 """
 
 import os
@@ -44,28 +46,27 @@ def load_data(data_path):
 def preprocess_data(df):
     """
     Preprocess the data and select features for modeling.
-
     Drops rows missing the target variable ('rating') and selects a set of features.
     """
     # Drop rows missing the target rating
     df = df.dropna(subset=["rating"])
     logging.info(f"After dropping missing ratings, data shape: {df.shape}")
 
-    # Select features for modeling. You can adjust this list based on further analysis.
+    # Features selected for modeling (adjust based on domain knowledge)
     features = [
-        "app_age_days",  # Derived app age in days since last update
+        "app_age_days",  # Age of the app in days since last update
         "reviews",  # Number of reviews
-        "size_mb",  # App size in MB
-        "installs_clean",  # Cleaned install numbers
+        "size_mb",  # App size (MB)
+        "installs_clean",  # Number of installs (numeric)
         "paid_flag",  # Binary flag (0: Free, 1: Paid)
-        "installs_bin",  # Binned install categories
+        "installs_bin",  # Binned installs category
         "category",  # App category (categorical)
-        "platform",  # Platform identifier (e.g., FDroid, Google Play)
-        "last_updated_year",  # Extracted year from the last update
+        "platform",  # Platform identifier (FDroid, Google Play)
+        "last_updated_year",  # Year extracted from the last update date
     ]
     target = "rating"
 
-    # Drop rows that have missing values in selected features
+    # Keep only the selected features and target; drop rows with missing values in these columns
     df_model = df[features + [target]].dropna()
     logging.info(
         f"After selecting features and dropping missing values, data shape: {df_model.shape}"
@@ -77,7 +78,6 @@ def build_preprocessor(numerical_features, categorical_features):
     """Build a ColumnTransformer to preprocess numerical and categorical features."""
     numerical_transformer = StandardScaler()
     categorical_transformer = OneHotEncoder(handle_unknown="ignore")
-
     preprocessor = ColumnTransformer(
         transformers=[
             ("num", numerical_transformer, numerical_features),
@@ -103,21 +103,21 @@ def main():
     data_path = os.path.join("data", "combined", "combined_apps_enhanced.csv")
     df = load_data(data_path)
 
-    # Preprocess the data to select features for modeling
+    # Preprocess the data: select features and target
     df_model, features, target = preprocess_data(df)
 
-    # Split the dataset into features (X) and target (y)
+    # Split dataset into features (X) and target (y)
     X = df_model.drop(target, axis=1)
     y = df_model[target]
 
-    # Split into training and test sets (80/20 split)
+    # Split data into training and test sets (80/20 split)
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=0.2, random_state=42
     )
     logging.info(f"Training set shape: {X_train.shape}")
     logging.info(f"Test set shape: {X_test.shape}")
 
-    # Define numerical and categorical features (ensure these match the selections in preprocess_data)
+    # Define numerical and categorical features for the preprocessor
     numerical_features = [
         "app_age_days",
         "reviews",
@@ -128,7 +128,7 @@ def main():
     ]
     categorical_features = ["installs_bin", "category", "platform"]
 
-    # Build the preprocessor and the pipeline
+    # Build the preprocessor and modeling pipeline
     preprocessor = build_preprocessor(numerical_features, categorical_features)
     pipeline = build_pipeline(preprocessor)
 
@@ -138,7 +138,7 @@ def main():
         "regressor__max_depth": [None, 10, 20],
     }
 
-    # Configure GridSearchCV to tune hyperparameters with 5-fold cross-validation
+    # Tune hyperparameters using GridSearchCV with 5-fold cross-validation
     grid_search = GridSearchCV(pipeline, param_grid, cv=5, scoring="r2", n_jobs=-1)
     grid_search.fit(X_train, y_train)
 
@@ -152,7 +152,7 @@ def main():
     logging.info(f"Test set R^2: {r2:.4f}")
     logging.info(f"Test set RMSE: {rmse:.4f}")
 
-    # Extract feature importances from the best model's regressor
+    # Extract feature importances from the best model
     best_model = grid_search.best_estimator_
     regressor = best_model.named_steps["regressor"]
     importances = regressor.feature_importances_
@@ -165,7 +165,7 @@ def main():
     )
     all_features = numerical_features + cat_feature_names
 
-    # Create a DataFrame for feature importances and sort them
+    # Create a DataFrame for the feature importances and sort them
     feat_importances = pd.DataFrame(
         {"feature": all_features, "importance": importances}
     )
@@ -173,14 +173,18 @@ def main():
     logging.info("Top 10 Feature Importances:")
     print(feat_importances.head(10))
 
-    # Plot and save the top 10 feature importances
+    # Plot the top 10 feature importances
     plt.figure(figsize=(10, 6))
     sns.barplot(x="importance", y="feature", data=feat_importances.head(10))
     plt.title("Top 10 Feature Importances")
     plt.xlabel("Importance")
     plt.ylabel("Feature")
     plt.tight_layout()
-    plot_path = os.path.join("images", "feature_importances.png")
+
+    # Ensure output directory for plots exists
+    plot_dir = os.path.join("images")
+    os.makedirs(plot_dir, exist_ok=True)
+    plot_path = os.path.join(plot_dir, "feature_importances.png")
     plt.savefig(plot_path)
     plt.close()
     logging.info(f"Feature importances plot saved to {plot_path}")
