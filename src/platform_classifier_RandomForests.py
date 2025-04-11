@@ -100,7 +100,7 @@ def main():
     plt.xlabel("Predicted")
     plt.ylabel("Actual")
     plt.tight_layout()
-    plt.savefig("data/combined/platform_confusion_matrix.png")
+    plt.savefig("images/platform_confusion_matrix.png")
     plt.close()
     logging.info("Confusion matrix plot saved.")
 
