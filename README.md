@@ -200,4 +200,19 @@ Additional Notes:
 
 • All scripts assume that the project is run from the project root directory (i.e., CMPT-353-PROJECT/).
 
+## My Role – Olayinka Kolawole
+
+### Project Contributions
+
+- **Acquired Google Play Data**: Implemented data acquisition scripts that utilized the Kaggle API to securely download the Google Play dataset. Applied authentication methods and handled API requests to obtain detailed app metadata for over 9,000 records.
+  
+- **Derived Enhanced Features**: Developed a feature derivation notebook in Jupyter that computed new variables such as `app_age_days`, log-transformed review and install metrics, and binned installations. This enhanced the predictive capacity of our dataset by capturing key temporal and usage trends.
+
+- **Built and Tuned Predictive Models**: Constructed both regression and classification models using scikit-learn pipelines. Employed Random Forest and Histogram Gradient Boosting regressors while tuning hyperparameters via `GridSearchCV`. These models yielded an R² increase and a balanced 94% classification accuracy in distinguishing app platforms.
+
+- **Refined Data Cleaning Techniques**: Updated cleaning scripts to better extract and convert critical fields. Improved the handling of outliers and missing values, resulting in smoother integration between datasets and measurable improvements in model performance.
+
+- **Produced Model Evaluation Visualizations**: Generated comprehensive evaluation reports including feature importance plots and confusion matrices using Seaborn and Matplotlib. These visual outputs clarified model behavior and provided actionable insight into factors influencing app popularity.
+
+
 This README provides detailed documentation of code, instructions for running the scripts, dependencies, and the expected file outputs. It ensures reproducibility and helps users—and evaluators—understand the flow of the project and the methods used to meet the assignment requirements.
